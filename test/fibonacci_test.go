@@ -1,45 +1,14 @@
-package fibonacciGenerator
+package test
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"gitlab.com/frenchap/fibonacci-golang/fibonacciGenerator"
 )
-
-func TestMain(m *testing.M) {
-	setup()
-	code := m.Run()
-	os.Exit(code)
-}
-
-func setup() {
-	logrus.Infoln("Starting setup")
-
-	jsonFile, err := os.Open("./../.env.local.json")
-	if err != nil {
-		logrus.Error("Error reading local env file", err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	var result map[string]string
-	json.Unmarshal([]byte(byteValue), &result)
-
-	for key, element := range result {
-
-		os.Setenv(key, element)
-	}
-
-	logrus.Infoln("Exiting setup")
-}
 
 func TestFibonacciMemoryStore(t *testing.T) {
 	testUpperBound := 1000
-	var testStore IFibonacciStore = NewMemoryFibonacciStore(testUpperBound)
+	var testStore fibonacciGenerator.IFibonacciStore = fibonacciGenerator.NewMemoryFibonacciStore(testUpperBound)
 
 	expectedMax := 1
 
