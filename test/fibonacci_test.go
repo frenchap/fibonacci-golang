@@ -1,67 +1,61 @@
 package test
 
 import (
-	"fmt"
+	"math/big"
 	"testing"
 	"time"
+
+	"github.com/frenchap/fibonacci-golang/fibonacciStore"
+	"github.com/sirupsen/logrus"
 )
 
-type FibonacciElement struct {
-	Y        int
-	TimeCost time.Duration
-}
+func TestMemoryStoreExpectedValues(t *testing.T) {
+	testMeta := NewTestMeta()
 
-type IFibonacciStore interface {
-	GetMax() int
-	GetValue(x int) (FibonacciElement, error)
-}
+	threeHundred := big.NewInt(0)
+	threeHundred, succeeded := threeHundred.SetString("222232244629420445529739893461909967206666939096499764990979600", 10)
+	if !succeeded {
+		t.Fatal("Error creating big.int for 300th fibonacci element")
+	}
+	expectedValues := map[int]big.Int{
+		0:   *big.NewInt(0),
+		1:   *big.NewInt(1),
+		2:   *big.NewInt(1),
+		3:   *big.NewInt(2),
+		4:   *big.NewInt(3),
+		5:   *big.NewInt(5),
+		6:   *big.NewInt(8),
+		13:  *big.NewInt(233),
+		300: *threeHundred,
+	}
 
-type MemoryFibonacciStore struct {
-	UpperBound int
-	Sequence   map[int]FibonacciElement
-}
+	for k, expectedValue := range expectedValues {
+		actualValue, err := testMeta.TestMemoryStore.GetValue(k)
 
-func NewMemoryFibonacciStore(upperBound int) MemoryFibonacciStore {
-	return MemoryFibonacciStore{
-		UpperBound: upperBound,
-		Sequence: map[int]FibonacciElement{
-			0: {0, 0},
-			1: {1, 0},
-		},
+		if err != nil {
+			t.Fatal("Error retrieving value", err)
+		}
+		if actualValue.Y.Cmp(&expectedValue) != 0 {
+			t.Fatalf("Value incorrect: should be %s but was %s", expectedValue.String(), actualValue.Y.String())
+		}
 	}
 }
 
-func (thisStore MemoryFibonacciStore) GetMax() int {
-	return len(thisStore.Sequence) - 1
-}
+func TestMemoryStoreUpperBound(t *testing.T) {
+	testMeta := NewTestMeta()
 
-func (thisStore MemoryFibonacciStore) GetValue(x int) (FibonacciElement, error) {
-	if value, valueFound := thisStore.Sequence[x]; valueFound {
-		return value, nil
-	}
-	if x > thisStore.UpperBound {
-		return FibonacciElement{0, 0}, fmt.Errorf("requested value of %d above upper bound of %d", x, thisStore.UpperBound)
+	maxFibonacci, err := testMeta.TestMemoryStore.GetValue(testMeta.TestUpperBound)
+	if err != nil {
+		t.Fatal("Error getting max fibonacci: ", err)
 	}
 
-	start := time.Now()
-	for i := 2; i <= x; i++ {
-		thisStore.Sequence[i] = FibonacciElement{thisStore.Sequence[i-2].Y + thisStore.Sequence[i-1].Y, time.Since(start)}
-	}
-
-	returnThis := thisStore.Sequence[x]
-	return returnThis, nil
-}
-
-type FibonacciGenerator struct {
-}
-
-func (thisGenerator FibonacciGenerator) CalculateFibonacci(x int) int {
-	return 0
+	logrus.Infof("Max fibonacci: %d, Time cost(ms): %d", maxFibonacci.Y, int64(maxFibonacci.TimeCost/time.Millisecond))
 }
 
 func TestFibonacciMemoryStore(t *testing.T) {
-	testUpperBound := 1000
-	var testStore IFibonacciStore = NewMemoryFibonacciStore(testUpperBound)
+	testMeta := NewTestMeta()
+
+	var testStore fibonacciStore.IFibonacciStore = fibonacciStore.NewMemoryFibonacciStore(testMeta.TestUpperBound)
 
 	expectedMax := 1
 
@@ -71,30 +65,9 @@ func TestFibonacciMemoryStore(t *testing.T) {
 		t.Fatalf("Max stored value incorrect: should be %d but was %d", expectedMax, actualMax)
 	}
 
-	_, err := testStore.GetValue(testUpperBound + 1)
+	_, err := testStore.GetValue(testMeta.TestUpperBound + 1)
 	if err == nil {
 		t.Fatal("Value over upper bound should throw error")
 	}
 
-	expectedValues := map[int]int{
-		0:  0,
-		1:  1,
-		2:  1,
-		3:  2,
-		4:  3,
-		5:  5,
-		6:  8,
-		13: 233,
-	}
-
-	for k, expectedValue := range expectedValues {
-		actualValue, err := testStore.GetValue(k)
-
-		if err != nil {
-			t.Fatal("Error retrieving value", err)
-		}
-		if actualValue.Y != expectedValue {
-			t.Fatalf("Value incorrect: should be %d but was %d", expectedValue, actualValue)
-		}
-	}
 }

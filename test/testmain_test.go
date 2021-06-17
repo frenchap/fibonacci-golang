@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 
@@ -33,24 +32,24 @@ func setup() {
 		Repository: "postgres",
 		Tag:        "12.3",
 		Env: []string{
-			"POSTGRES_USER=" + testMeta.dbUser,
-			"POSTGRES_PASSWORD=" + testMeta.dbPassword,
-			"POSTGRES_DB=" + testMeta.dbName,
+			"POSTGRES_USER=" + testMeta.DbUser,
+			"POSTGRES_PASSWORD=" + testMeta.DbPassword,
+			"POSTGRES_DB=" + testMeta.DbName,
 		},
-		ExposedPorts: []string{testMeta.dbPort},
+		ExposedPorts: []string{testMeta.DbPort},
 		PortBindings: map[docker.Port][]docker.PortBinding{
 			"5432": {
-				{HostIP: "0.0.0.0", HostPort: testMeta.dbPort},
+				{HostIP: "0.0.0.0", HostPort: testMeta.DbPort},
 			},
 		},
 	}
 
 	resource, err := pool.RunWithOptions(&opts)
 	if err != nil {
-		log.Fatalf("Error running pool: %s", err)
+		logrus.Infof("Error running pool: %+v", err)
 	}
 
-	testMeta.dataSourceName = fmt.Sprintf(testMeta.dataSourceName, testMeta.dbUser, testMeta.dbPassword, testMeta.dbPort, testMeta.dbName)
+	testMeta.DataSourceName = fmt.Sprintf(testMeta.DataSourceName, testMeta.DbUser, testMeta.DbPassword, testMeta.DbPort, testMeta.DbName)
 
 	logrus.Infof("Resource: %+v", resource)
 
