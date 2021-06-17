@@ -1,3 +1,5 @@
+github.com/ALTree/bigfloat v0.0.0-20201218142103-4a33235224ec h1:tPYYUIlnk8STUTx7TEcZqCgk0zvxL6KH6eDSTa38zBI=
+github.com/ALTree/bigfloat v0.0.0-20201218142103-4a33235224ec/go.mod h1:+NaH2gLeY6RPBPPQf4aRotPPStg+eXc8f9ZaE4vRfD4=
 github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 h1:w+iIsaOQNcT7OZ575w+acHgRric5iCyQh+xv+KJ4HB8=
 github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78/go.mod h1:LmzpDX56iTiv29bbRTIsUNlaFfuhWRQBWjQdVyAevI8=
 github.com/Microsoft/go-winio v0.4.14 h1:+hMXMk01us9KgxGb7ftKQt2Xpf5hH/yky+TDA+qxleU=

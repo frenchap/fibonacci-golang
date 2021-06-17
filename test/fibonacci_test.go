@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/frenchap/fibonacci-golang/fibonacciStore"
 	"github.com/sirupsen/logrus"
 )
 
@@ -41,31 +40,46 @@ func TestMemoryStoreExpectedValues(t *testing.T) {
 	}
 }
 
+func TestMemoryStoreGetIntermediateValueCount(t *testing.T) {
+	testMeta := NewTestMeta()
+
+	intermediateCountTestMap := map[*big.Int]int{big.NewInt(377): 13, big.NewInt(378): 14}
+
+	for value, expectedCount := range intermediateCountTestMap {
+		actualCount := testMeta.TestMemoryStore.GetIntermediateValueCount(value)
+		if actualCount != expectedCount {
+			t.Fatalf("GetIntermediateValueCount incorrect: should be %d but was %d", expectedCount, actualCount)
+		}
+	}
+}
+
 func TestMemoryStoreUpperBound(t *testing.T) {
 	testMeta := NewTestMeta()
+
+	expectedMax := 1
+	actualMax := testMeta.TestMemoryStore.GetMax()
+	if actualMax != expectedMax {
+		t.Fatalf("Max stored value incorrect: should be %d but was %d", expectedMax, actualMax)
+	}
 
 	maxFibonacci, err := testMeta.TestMemoryStore.GetValue(testMeta.TestUpperBound)
 	if err != nil {
 		t.Fatal("Error getting max fibonacci: ", err)
 	}
 
-	logrus.Infof("Max fibonacci: %d, Time cost(ms): %d", maxFibonacci.Y, int64(maxFibonacci.TimeCost/time.Millisecond))
-}
-
-func TestFibonacciMemoryStore(t *testing.T) {
-	testMeta := NewTestMeta()
-
-	var testStore fibonacciStore.IFibonacciStore = fibonacciStore.NewMemoryFibonacciStore(testMeta.TestUpperBound)
-
-	expectedMax := 1
-
-	actualMax := testStore.GetMax()
-
+	expectedMax = testMeta.TestUpperBound
+	actualMax = testMeta.TestMemoryStore.GetMax()
 	if actualMax != expectedMax {
 		t.Fatalf("Max stored value incorrect: should be %d but was %d", expectedMax, actualMax)
 	}
 
-	_, err := testStore.GetValue(testMeta.TestUpperBound + 1)
+	logrus.Infof("Max fibonacci: %d, Time cost(ms): %d", maxFibonacci.Y, int64(maxFibonacci.TimeCost/time.Millisecond))
+}
+
+func TestFibonacciMemoryStoreValuePastUpperBound(t *testing.T) {
+	testMeta := NewTestMeta()
+
+	_, err := testMeta.TestMemoryStore.GetValue(testMeta.TestUpperBound + 1)
 	if err == nil {
 		t.Fatal("Value over upper bound should throw error")
 	}
