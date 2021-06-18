@@ -3,7 +3,6 @@ package test
 import (
 	"math/big"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -40,10 +39,30 @@ func TestMemoryStoreExpectedValues(t *testing.T) {
 	}
 }
 
+func TestMemoryStoreClearStore(t *testing.T) {
+	testMeta := NewTestMeta()
+
+	expectedMax := testMeta.TestUpperBound
+	testMeta.TestMemoryStore.GetValue(testMeta.TestUpperBound)
+	actualMax := testMeta.TestMemoryStore.GetMax()
+
+	if expectedMax != actualMax {
+		t.Fatalf("Max stored value incorrect: should be %d but was %d", expectedMax, actualMax)
+	}
+
+	testMeta.TestMemoryStore.ClearStore()
+
+	expectedMax = 1 //all values cleared except 0 and 1; store requires them for GetValue
+	actualMax = testMeta.TestMemoryStore.GetMax()
+	if expectedMax != actualMax {
+		t.Fatalf("Max stored value incorrect after ClearStore: should be %d but was %d", expectedMax, actualMax)
+	}
+}
+
 func TestMemoryStoreGetIntermediateValueCount(t *testing.T) {
 	testMeta := NewTestMeta()
 
-	intermediateCountTestMap := map[*big.Int]int{big.NewInt(377): 13, big.NewInt(378): 14}
+	intermediateCountTestMap := map[*big.Int]int{big.NewInt(377): 14, big.NewInt(378): 15, big.NewInt(102334155): 40, big.NewInt(102334156): 41, big.NewInt(120): 12}
 
 	for value, expectedCount := range intermediateCountTestMap {
 		actualCount := testMeta.TestMemoryStore.GetIntermediateValueCount(value)
@@ -73,7 +92,7 @@ func TestMemoryStoreUpperBound(t *testing.T) {
 		t.Fatalf("Max stored value incorrect: should be %d but was %d", expectedMax, actualMax)
 	}
 
-	logrus.Infof("Max fibonacci: %d, Time cost(ms): %d", maxFibonacci.Y, int64(maxFibonacci.TimeCost/time.Millisecond))
+	logrus.Infof("Max fibonacci: %d, Time cost(ms): %d", maxFibonacci.Y, int64(maxFibonacci.TimeCost))
 }
 
 func TestFibonacciMemoryStoreValuePastUpperBound(t *testing.T) {

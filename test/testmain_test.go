@@ -2,30 +2,30 @@ package test
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
 
+	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 	"github.com/sirupsen/logrus"
 )
 
-func TestMain(m *testing.M) {
-	setup()
-	code := m.Run()
-	os.Exit(code)
-}
+// func TestMain(m *testing.M) {
+// 	setup()
+// 	code := m.Run()
+// 	os.Exit(code)
+// }
 
-func setup() {
-	logrus.Infoln("Starting setup")
+func TestMain(m *testing.M) {
+	logrus.Infoln("Starting main")
 
 	testMeta := NewTestMeta()
 
 	pool, err := dockertest.NewPool("")
 	if err != nil {
-		logrus.Error("Error creating new pool: ", err)
+		logrus.Fatal("Error creating new pool: ", err)
 	}
 
 	opts := dockertest.RunOptions{
@@ -46,10 +46,8 @@ func setup() {
 
 	resource, err := pool.RunWithOptions(&opts)
 	if err != nil {
-		logrus.Infof("Error running pool: %+v", err)
+		logrus.Fatal("Error running pool: ", err)
 	}
-
-	testMeta.DataSourceName = fmt.Sprintf(testMeta.DataSourceName, testMeta.DbUser, testMeta.DbPassword, testMeta.DbPort, testMeta.DbName)
 
 	logrus.Infof("Resource: %+v", resource)
 
@@ -68,6 +66,14 @@ func setup() {
 
 		os.Setenv(key, element)
 	}
+
+	code := m.Run()
+
+	if err := pool.Purge(resource); err != nil {
+		logrus.Fatal("Error purging resource: ", err)
+	}
+
+	os.Exit(code)
 
 	logrus.Infoln("Exiting setup")
 }
