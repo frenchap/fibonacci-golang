@@ -2,17 +2,6 @@ module github.com/frenchap/fibonacci-golang
 
 go 1.16
 
-// go 1.16
-
-// require (
-// 	github.com/labstack/echo v3.3.10+incompatible
-// 	github.com/labstack/echo/v4 v4.3.0
-// 	github.com/lib/pq v0.0.0-20180327071824-d34b9ff171c2
-// 	github.com/ory/dockertest/v3 v3.6.5
-// 	github.com/sirupsen/logrus v1.8.1
-// 	robpike.io/ivy v0.1.0
-// )
-
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/labstack/echo v3.3.10+incompatible
