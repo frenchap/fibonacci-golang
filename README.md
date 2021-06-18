@@ -24,3 +24,14 @@ go run main.go
 - Stop any running postgres containers
 - If postgres is installed and running locally, stop the service
 
+### Shell commands
+
+```
+export FI_API_DB_USER="postgres"
+export FI_API_DB_PASSWORD="12345-luggage-combo"
+export FI_API_DB_NAME="postgres"
+export FI_API_DB_PORT="5432"
+export FI_API_UPPER_BOUND="50000"
+docker run --name postgres-db  -e POSTGRES_PASSWORD=12345-luggage-combo -e POSTGRES_DB=postgres -d -p 5432:5432 postgres
+go run main.go
+```
