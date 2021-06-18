@@ -39,6 +39,14 @@ docker run --name postgres-db  -e POSTGRES_PASSWORD=12345-luggage-combo -e POSTG
 go run main.go
 ```
 
+##
+Example commands in postman:
+
+- Gets number of ordinals below 40: `GET http://localhost:8080/ordinals/40`
+- Gets the 10th fibonacci number: `GET http://localhost:8080/values/10`
+- Clears the stored values: `DELETE http://localhost:8080/values`
+
+
 ## Cleanup
 
 Use `docker ps` to identify any created images, `docker stop <id>` to stop the container, and `docker rm <id>` to remove them
