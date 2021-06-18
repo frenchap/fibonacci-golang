@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/frenchap/fibonacci-golang/fibonacciStore"
+	"github.com/ory/dockertest/v3"
 )
 
 type TestMeta struct {
@@ -18,6 +19,9 @@ type TestMeta struct {
 	TestMemoryStore fibonacciStore.IFibonacciStore
 
 	Dialect string
+
+	Pool     *dockertest.Pool
+	Resource *dockertest.Resource
 }
 
 func NewTestMeta() *TestMeta {

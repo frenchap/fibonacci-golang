@@ -8,7 +8,8 @@ import (
 )
 
 func TestPostgresStoreClearStore(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
+
 	var testPostgresStore fibonacciStore.IFibonacciStore
 	testPostgresStore, err := fibonacciStore.NewPostgresFibonacciStore(testMeta.TestUpperBound, testMeta.Dialect, testMeta.DataSourceName)
 	if err != nil {
@@ -30,10 +31,13 @@ func TestPostgresStoreClearStore(t *testing.T) {
 	if expectedMax != actualMax {
 		t.Fatalf("Max stored value incorrect after ClearStore: should be %d but was %d", expectedMax, actualMax)
 	}
+
+	teardown(testMeta)
 }
 
 func TestPostgresStoreGetIntermediateValueCount(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
+
 	var testPostgresStore fibonacciStore.IFibonacciStore
 	testPostgresStore, err := fibonacciStore.NewPostgresFibonacciStore(testMeta.TestUpperBound, testMeta.Dialect, testMeta.DataSourceName)
 	if err != nil {
@@ -48,10 +52,12 @@ func TestPostgresStoreGetIntermediateValueCount(t *testing.T) {
 			t.Fatalf("GetIntermediateValueCount incorrect: should be %d but was %d", expectedCount, actualCount)
 		}
 	}
+
+	teardown(testMeta)
 }
 
 func TestPostgresStoreExpectedValues(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
 
 	var testPostgresStore fibonacciStore.IFibonacciStore
 	testPostgresStore, err := fibonacciStore.NewPostgresFibonacciStore(testMeta.TestUpperBound, testMeta.Dialect, testMeta.DataSourceName)
@@ -94,4 +100,6 @@ func TestPostgresStoreExpectedValues(t *testing.T) {
 			t.Fatalf("Value incorrect: should be %s but was %s", expectedValue.String(), actualValue.Y.String())
 		}
 	}
+
+	teardown(testMeta)
 }

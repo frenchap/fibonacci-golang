@@ -44,6 +44,7 @@ func NewPostgresFibonacciStore(upperBound int, dialect string, dsn string) (*Pos
 			"cost int " +
 			");"
 
+	time.Sleep(2 * time.Second)
 	createStatement, err := db.PrepareContext(ctx, createQuery)
 	if err != nil {
 		logrus.Error("Error preparing create statement: ", err)

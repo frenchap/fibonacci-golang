@@ -8,7 +8,7 @@ import (
 )
 
 func TestMemoryStoreExpectedValues(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
 
 	threeHundred := big.NewInt(0)
 	threeHundred, succeeded := threeHundred.SetString("222232244629420445529739893461909967206666939096499764990979600", 10)
@@ -37,10 +37,12 @@ func TestMemoryStoreExpectedValues(t *testing.T) {
 			t.Fatalf("Value incorrect: should be %s but was %s", expectedValue.String(), actualValue.Y.String())
 		}
 	}
+
+	teardown(testMeta)
 }
 
 func TestMemoryStoreClearStore(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
 
 	expectedMax := testMeta.TestUpperBound
 	testMeta.TestMemoryStore.GetValue(testMeta.TestUpperBound)
@@ -57,10 +59,12 @@ func TestMemoryStoreClearStore(t *testing.T) {
 	if expectedMax != actualMax {
 		t.Fatalf("Max stored value incorrect after ClearStore: should be %d but was %d", expectedMax, actualMax)
 	}
+
+	teardown(testMeta)
 }
 
 func TestMemoryStoreGetIntermediateValueCount(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
 
 	intermediateCountTestMap := map[*big.Int]int{big.NewInt(377): 14, big.NewInt(378): 15, big.NewInt(102334155): 40, big.NewInt(102334156): 41, big.NewInt(120): 12}
 
@@ -70,10 +74,12 @@ func TestMemoryStoreGetIntermediateValueCount(t *testing.T) {
 			t.Fatalf("GetIntermediateValueCount incorrect: should be %d but was %d", expectedCount, actualCount)
 		}
 	}
+
+	teardown(testMeta)
 }
 
 func TestMemoryStoreUpperBound(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
 
 	expectedMax := 1
 	actualMax := testMeta.TestMemoryStore.GetMax()
@@ -93,14 +99,17 @@ func TestMemoryStoreUpperBound(t *testing.T) {
 	}
 
 	logrus.Infof("Max fibonacci: %d, Time cost(ms): %d", maxFibonacci.Y, int64(maxFibonacci.TimeCost))
+
+	teardown(testMeta)
 }
 
 func TestFibonacciMemoryStoreValuePastUpperBound(t *testing.T) {
-	testMeta := NewTestMeta()
+	testMeta := setup()
 
 	_, err := testMeta.TestMemoryStore.GetValue(testMeta.TestUpperBound + 1)
 	if err == nil {
 		t.Fatal("Value over upper bound should throw error")
 	}
 
+	teardown(testMeta)
 }

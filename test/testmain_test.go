@@ -1,9 +1,6 @@
 package test
 
 import (
-	"os"
-	"testing"
-
 	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -16,8 +13,8 @@ import (
 // 	os.Exit(code)
 // }
 
-func TestMain(m *testing.M) {
-	logrus.Infoln("Starting main")
+func setup() *TestMeta {
+	logrus.Infoln("Starting setup")
 
 	testMeta := NewTestMeta()
 
@@ -25,6 +22,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		logrus.Fatal("Error creating new pool: ", err)
 	}
+
+	testMeta.Pool = pool
 
 	opts := dockertest.RunOptions{
 		Repository: "postgres",
@@ -47,15 +46,21 @@ func TestMain(m *testing.M) {
 		logrus.Fatal("Error running pool: ", err)
 	}
 
+	testMeta.Resource = resource
 	logrus.Infof("Resource: %+v", resource)
 
-	code := m.Run()
+	logrus.Info("Exiting setup")
 
-	if err := pool.Purge(resource); err != nil {
+	return testMeta
+}
+
+func teardown(testMeta *TestMeta) {
+
+	logrus.Infoln("Entering teardown")
+
+	if err := testMeta.Pool.Purge(testMeta.Resource); err != nil {
 		logrus.Fatal("Error purging resource: ", err)
 	}
 
-	os.Exit(code)
-
-	logrus.Infoln("Exiting setup")
+	logrus.Infoln("Exiting teardown")
 }

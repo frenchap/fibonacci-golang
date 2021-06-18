@@ -15,7 +15,8 @@ import (
 
 func TestAPIStartup(t *testing.T) {
 
-	testMeta := NewTestMeta()
+	testMeta := setup()
+
 	var testPostgresStore fibonacciStore.IFibonacciStore
 	testPostgresStore, err := fibonacciStore.NewPostgresFibonacciStore(testMeta.TestUpperBound, testMeta.Dialect, testMeta.DataSourceName)
 	if err != nil {
@@ -63,4 +64,6 @@ func TestAPIStartup(t *testing.T) {
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))
+
+	teardown(testMeta)
 }
