@@ -1,8 +1,6 @@
 package test
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -50,22 +48,6 @@ func TestMain(m *testing.M) {
 	}
 
 	logrus.Infof("Resource: %+v", resource)
-
-	jsonFile, err := os.Open("./../.env.local.json")
-	if err != nil {
-		logrus.Error("Error reading local env file", err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	var result map[string]string
-	json.Unmarshal([]byte(byteValue), &result)
-
-	for key, element := range result {
-
-		os.Setenv(key, element)
-	}
 
 	code := m.Run()
 

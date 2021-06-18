@@ -24,6 +24,9 @@ go run main.go
 - Stop any running postgres containers
 - If postgres is installed and running locally, stop the service
 
+###
+- Note, the tests won't currently run in WSL2 linux environments
+
 ### Shell commands
 
 ```
@@ -35,3 +38,7 @@ export FI_API_UPPER_BOUND="50000"
 docker run --name postgres-db  -e POSTGRES_PASSWORD=12345-luggage-combo -e POSTGRES_DB=postgres -d -p 5432:5432 postgres
 go run main.go
 ```
+
+## Cleanup
+
+Use `docker ps` to identify any created images, `docker stop <id>` to stop the container, and `docker rm <id>` to remove them
